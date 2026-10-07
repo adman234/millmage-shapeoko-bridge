@@ -174,7 +174,7 @@ func applyConfig(fs *flag.FlagSet, path string) error {
 	fs.Visit(func(fl *flag.Flag) { given[fl.Name] = true })
 	sc := bufio.NewScanner(f)
 	for n := 1; sc.Scan(); n++ {
-		line := strings.TrimSpace(strings.TrimPrefix(sc.Text(), "﻿"))
+		line := strings.TrimSpace(strings.TrimPrefix(sc.Text(), string(rune(0xFEFF))))
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
