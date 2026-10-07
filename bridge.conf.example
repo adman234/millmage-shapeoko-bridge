@@ -1,0 +1,45 @@
+# MillMage Shapeoko Bridge settings. Lines are "name = value".
+# Restart the bridge after changing anything here.
+
+# Port MillMage connects to. 23 is what MillMage uses by default.
+listen = :23
+
+# Status page. Open http://<this computer>:8080 in a browser. "off" disables it.
+http = :8080
+
+# Where jobs go.
+#   carbide  send to Carbide Motion (needs Allow Remote Access switched on)
+#   folder   only save to jobs-dir, for senders that open or watch a folder
+backend = carbide
+
+# Carbide Motion's address. Leave as is when it runs on this computer.
+carbide-addr = 127.0.0.1:6280
+
+# Folder where every received job is saved.
+# jobs-dir = C:\ProgramData\MillMageBridge\jobs
+
+# How many jobs to keep on disk. 0 keeps all of them.
+keep = 50
+
+# A job that does not end with M2 or M30 may have been cut short in transit.
+# true holds such jobs until someone presses "Send anyway" on the status page.
+require-end = true
+
+# Silence that ends a program with no M2 or M30.
+idle-timeout = 5s
+
+# Programs shorter than this many lines are console commands, not jobs.
+min-lines = 5
+
+# Who may connect: private (LAN addresses only), any, or a list such as
+# 192.168.1.0/24, 10.0.0.15
+allow = private
+
+# Machine travel in mm (X,Y,Z) reported to MillMage. Shapeoko 4 XL shown.
+travel = 838,444,100
+
+# Log file. Leave unset to log to the console.
+# log-file = C:\ProgramData\MillMageBridge\bridge.log
+
+# true logs every line MillMage sends. Useful when something is not understood.
+trace = false

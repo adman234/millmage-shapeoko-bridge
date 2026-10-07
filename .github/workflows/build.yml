@@ -1,0 +1,51 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+      - name: Check formatting
+        run: test -z "$(gofmt -l .)" || (gofmt -d . && exit 1)
+      - run: go vet ./...
+      - run: go test -race ./...
+      - name: Build all platforms
+        run: |
+          version="${GITHUB_REF_NAME}"
+          case "$GITHUB_REF" in refs/tags/*) ;; *) version="dev-${GITHUB_SHA::7}" ;; esac
+          mkdir dist
+          build() {
+            out="dist/millmage-bridge-$1-$2${4}"
+            GOOS=$1 GOARCH=$2 GOARM=$3 CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=${version}" -o "$out" .
+          }
+          build windows amd64 "" .exe
+          build windows arm64 "" .exe
+          build linux amd64 "" ""
+          build linux arm64 "" ""
+          build linux arm 7 ""
+          build darwin amd64 "" ""
+          build darwin arm64 "" ""
+          cp install.ps1 install.sh uninstall.ps1 bridge.conf.example dist/
+          (cd dist && sha256sum * > SHA256SUMS)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: millmage-bridge
+          path: dist/
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true

@@ -1,0 +1,6 @@
+/millmage-bridge
+/millmage-bridge.exe
+/dist/
+/jobs/
+/bridge.conf
+*.log
